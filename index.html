@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Belanosima:wght@400;600;700&family=Chango&family=Codystar:wght@300;400&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Sono:wght@200..800&display=swap');        
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            position: fixed;
+            top: -50vh;
+            left: -50vw;
+            z-index: 0;
+        }
+
+        #page {
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            text-align: center;
+            background-color: rgba(50,50,50,0.4);
+        }
+
+        #headbox {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            height: 70vh;
+            max-width: 95vw;
+            position: fixed;
+            top: 0;
+        }
+
+        h1 {
+            font-family: "Chango", sans-serif;
+            font-size: 8vw;
+            margin: auto;
+            text-shadow: 0 0 2px white;
+            opacity: 0.8;
+            transition: opacity 0.25s;
+        }
+
+        p {
+            font-family: "Sono", serif;
+            font-weight: bold;
+            font-size: 4vh;
+            bottom: 15vh;
+            position: fixed;
+            max-width: 95vw;
+            opacity: 0.8;
+            transition: opacity 0.25s;
+            z-index: 10;
+        }
+
+        #donate {
+            width: 100vw;
+            height: 15vh;
+            color: white;
+            bottom:0;
+            position: fixed;
+            transition: transform 0.2s;
+            border: none;
+            display: flex;
+            opacity: 0.85;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h3 {
+            font-family: "Sono", serif;
+            font-weight: bold;
+            font-size: 6vh;
+            color: #093b31;
+            max-width: 80vw;
+            align-self:center;
+        }
+
+        #top {
+            font-family: "Sono", serif;
+            font-weight: bold;
+            font-size: 3.5vh;
+            background-color: #224e46;
+            color: #ffffff;
+            width: calc((18vw + 18vh)/2);
+            aspect-ratio: 1;
+            justify-content: right;
+            bottom:-2vh;
+            right:-2vh;
+            position: fixed;
+            opacity: 1;
+            transition: opacity 0.2s, transform 0.2s;
+            border-top: calc((3vw + 3vh)/2) solid #224e46;
+            border-left: calc((3vw + 3vh)/2) solid #224e46;
+            border-top-left-radius: 100%;
+        }
+
+        button:hover {
+            transform: scale(1.075);
+            opacity: 0.75;
+        }
+
+        button:active {
+            transform: scale(1.15);
+            opacity: 0.65;
+        }
+
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div id="page" class="grid-container">
+        <div id="headbox">
+            <h1 id='heading'></h1>
+        </div>
+        <p  id='smaller'></p>
+        <button id="donate"><h3>Click here to donate.</h3></button>
+        <button id="top" onclick="index=-1">top</button>
+    </div>
+
+    <script>
+        const parseText = (inputArray) => {
+            return inputArray.map(item => {
+                const lines = item.split('\n');
+                return {
+                    heading: lines[0],
+                    subheading: lines[1],
+                };
+            });
+        };
+
+        const text = parseText([
+`Hello There!
+Tap or scroll to learn why this website exists...`, 
+
+`Trail Life is a great group.
+Its a national faith-based scouting group for boys like the one who made this website!`, 
+
+`They help the community,
+Troop NC 1611 is my troop, and we volunteer around our county and hold events for everyone to enjoy!`, 
+
+`And do really fun stuff!
+We go on camping trips, hikes, and lots of other adventures. We also build cool things together!`, 
+
+`While teaching kids good values
+At all our events and meetings we foster leadership, kindness, and stewardship, and spend time in prayer and the word`, 
+
+`But all that takes resources
+Though we use what we have on hand as wisely as possible, it still takes funds to do activities`, 
+
+`This is your chance to help
+  `, 
+
+`Please consider donating
+We appreciate any level of generosity :)`
+        ]);     
+
+        const h = document.getElementById('heading');
+        const p = document.getElementById('smaller')
+        let index = 0;
+        let timeout;
+        let fading = false;
+
+        function display() {
+
+            h.style.opacity = 0;
+            p.style.opacity = 0;
+            fading = true;
+
+            setTimeout(() => {
+                h.textContent    = text[index].heading;
+                p.textContent    = text[index].subheading;
+                h.style.opacity  = 0.8;
+                p.style.opacity  = 0.75;
+            }, 250);        
+
+            setTimeout(() => {
+                fading = false;
+            }, 500);
+        }
+
+        window.addEventListener('wheel', (event) => {
+            if (fading == false) {
+                index += Math.sign(event.deltaY);
+                index = Math.max(0, Math.min(text.length-1, index));
+                display()
+            }
+        });
+
+        window.addEventListener('click', (event) => {
+            if (fading == false && index !== text.length-1) {
+                index += 1;
+                index = Math.max(0, Math.min(text.length-1, index));
+                display()
+            }
+        });
+
+        display()
+
+//THE BACKGRUOND PORTION//////////////////////////////////////////////////////////////////////////////////////////////
+
+        const greens = [
+            '#004631', 
+            '#042b2a', 
+            '#1c4947', 
+            '#093b31', 
+            '#0d412e', 
+            '#005b47', 
+            '#007f5c', 
+            '#006d4b', 
+            '#1a6d5b', 
+            '#2a8b6f', 
+            '#112721'
+        ];
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            triangleHeight = (window.innerWidth+window.innerHeight) / 15;
+            triangleBase   = triangleHeight / 1.5;
+            offsetAmount   = triangleBase / 4;
+            circleRadius   = triangleBase / 2.03;
+            canvas.width   = window.innerWidth * 2;
+            canvas.height  = window.innerHeight * 2;
+            drawPattern();
+        }
+
+        function drawPattern() {
+            ctx.fillStyle = '#3b2e1e'
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = -1; i < Math.floor(canvas.height / (triangleBase / 2)) +1; i++) {
+                for (let j = -1; j < Math.floor(canvas.width / (triangleBase / 2)) +1; j++) {
+                    const x = j * triangleBase / 1.2 + Math.floor(Math.random() * (offsetAmount * 2 + 1)) - offsetAmount;
+                    const y = i * triangleBase / 1.2 + Math.floor(Math.random() * (offsetAmount * 2 + 1)) - offsetAmount;
+                    drawTriangleWithCircle(x, y, triangleHeight, triangleBase);
+                }
+            }
+        }
+
+        function drawTriangleWithCircle(x, y, height, base) {
+            ctx.fillStyle = greens[Math.floor(Math.random() * greens.length)];
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - base / 2, y + height);
+            ctx.lineTo(x + base / 2, y + height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x, y + height, circleRadius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', resizeCanvas);
+
+        window.addEventListener('mousemove', (event) => {
+            if (not ('ontouchstart' in window || navigator.maxTouchPoints > 0)){
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+
+                const newX = mouseX - (canvas.width / 2);
+                const newY = mouseY - (canvas.height / 2);
+
+                canvas.style.left = `${newX/4}px`;
+                canvas.style.top = `${newY/4}px`;
+            }
+        });
+    </script>
+</body>
+</html>
